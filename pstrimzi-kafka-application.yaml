@@ -6,14 +6,20 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: oci://quay.io/strimzi-helm/strimzi-kafka-operator
+    repoURL: https://charts.strimzi.io
     chart: strimzi-kafka-operator
     targetRevision: 0.45.0
     helm:
-      releaseName: strimzi-kafka-operator
-      parameters:
-        - name: watchAnyNamespace
-          value: "false"
+      valuesObject:
+        watchNamespaces:
+          - kafka
+        defaultImageRegistry: quay.io
+        defaultImageRepository: strimzi
+        env:
+          - name: KUBERNETES_VERSION
+            value: "1.29.0"        # ← tells strimzi not to auto-detect
+          - name: STRIMZI_FEATURE_GATES
+            value: ""
   destination:
     server: https://kubernetes.default.svc
     namespace: kafka

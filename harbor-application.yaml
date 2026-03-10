@@ -20,16 +20,15 @@ spec:
         core:
           secret: "coresecretvalue"
         jobservice:
-          secret: "coresecretvalue"
-        secretKey: "abcdefgh12345678"
-        jobservice:
           replicas: 1
+          secret: "coresecretvalue"
           strategy:
             type: Recreate
         registry:
           replicas: 1
           strategy:
             type: Recreate
+        secretKey: "abcdefgh12345678"
   destination:
     server: https://kubernetes.default.svc
     namespace: harbor

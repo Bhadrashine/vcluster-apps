@@ -8,14 +8,15 @@ spec:
   source:
     repoURL: https://helm.releases.hashicorp.com
     chart: vault
-    targetRevision: 0.32.0
+    targetRevision: 0.29.1
     helm:
-      releaseName: vault
-      parameters:
-        - name: server.dev.enabled
-          value: "false"
-        - name: server.standalone.enabled
-          value: "true"
+      valuesObject:
+        server:
+          dev:
+            enabled: true
+            devRootToken: "root"
+        injector:
+          enabled: true
   destination:
     server: https://kubernetes.default.svc
     namespace: vault

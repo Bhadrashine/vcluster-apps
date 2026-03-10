@@ -1,40 +1,42 @@
-project: default
-source:
-  repoURL: https://helm.goharbor.io
-  targetRevision: 1.13.0
-  chart: harbor
-  helm:
-    parameters:
-      - name: expose.type
-        value: nodePort
-
-      - name: externalURL
-        value: http://harbor.local
-
-      - name: expose.tls.enabled
-        value: "false"
-
-      - name: harborAdminPassword
-        value: "Harbor12345"
-
-      - name: core.secret
-        value: "changeme-core-secret"
-
-      - name: jobservice.secret
-        value: "changeme-core-secret"
-
-      # ✅ Mix letters and numbers to prevent int64 parsing
-      - name: secretKey
-        value: "abcdefgh12345678"    # exactly 16 chars, alphanumeric
-
-releaseName: harbor
-destination:
-  server: https://kubernetes.default.svc
-  namespace: harbor
-syncPolicy:
-  automated:
-    prune: true
-    selfHeal: true
-  syncOptions:
-    - CreateNamespace=true
-    - ServerSideApply=true
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: harbor
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://helm.goharbor.io
+    chart: harbor
+    targetRevision: 1.13.0
+    helm:
+      valuesObject:
+        expose:
+          type: nodePort
+          tls:
+            enabled: false
+        externalURL: http://harbor.local
+        harborAdminPassword: "Harbor12345"
+        core:
+          secret: "coresecretvalue"
+        jobservice:
+          secret: "coresecretvalue"
+        secretKey: "abcdefgh12345678"
+        jobservice:
+          replicas: 1
+          strategy:
+            type: Recreate
+        registry:
+          replicas: 1
+          strategy:
+            type: Recreate
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: harbor
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
